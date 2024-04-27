@@ -1,8 +1,14 @@
 """Define constants for the Spotify integration."""
 
+from dataclasses import dataclass
 import logging
+from typing import Any
+
+from spotipy import Spotify
 
 from homeassistant.components.media_player import MediaType
+from homeassistant.helpers.config_entry_oauth2_flow import OAuth2Session
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 DOMAIN = "spotify"
 

@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+from asyncio import run_coroutine_threadsafe
 from typing import Any
 
+from spotipy import Spotify
 import yarl
+
+from homeassistant.core import HomeAssistant
 
 from .const import MEDIA_PLAYER_PREFIX
 

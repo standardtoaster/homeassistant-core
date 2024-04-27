@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import timedelta
 from typing import Any
 
@@ -18,10 +17,13 @@ from homeassistant.helpers.config_entry_oauth2_flow import (
     OAuth2Session,
     async_get_config_entry_implementation,
 )
+from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .browse_media import async_browse_media
 from .const import DOMAIN, LOGGER, SPOTIFY_SCOPES
+from .ha_spotify_data import HomeAssistantSpotifyData
+from .services import SpotifyServices
 from .util import (
     is_spotify_media_type,
     resolve_spotify_media_type,
@@ -38,17 +40,6 @@ __all__ = [
     "is_spotify_media_type",
     "resolve_spotify_media_type",
 ]
-
-
-@dataclass
-class HomeAssistantSpotifyData:
-    """Spotify data stored in the Home Assistant data object."""
-
-    client: Spotify
-    current_user: dict[str, Any]
-    devices: DataUpdateCoordinator[list[dict[str, Any]]]
-    session: OAuth2Session
-
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Spotify from a config entry."""
@@ -110,6 +101,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if not set(session.token["scope"].split(" ")).issuperset(SPOTIFY_SCOPES):
         raise ConfigEntryAuthFailed
+
+    SpotifyServices(hass).async_register()
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
